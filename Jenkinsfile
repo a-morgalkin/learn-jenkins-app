@@ -90,7 +90,7 @@ pipeline {
                     echo "Deploy to staging. Project Id: $NETLIFY_SITE_ID"
                     node_modules/.bin/netlify status
                     node_modules/.bin/netlify deploy --dir=build --json > dep-staging.json
-                    node_modules/.bin/node-jq -r 'deploy_url' dep-staging.json
+                    node_modules/.bin/node-jq -r '.deploy_url' dep-staging.json
                 '''
             }
         }
