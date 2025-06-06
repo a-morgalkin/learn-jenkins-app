@@ -105,12 +105,15 @@ pipeline {
             }
         }
 
-        stage('Deploy production') {
+        stage('Deploy prod') {
             agent {
                 docker {
                     image 'node:18-alpine'
                     reuseNode true
                 }
+            }
+            environment {
+                CI_ENVIRONMENT_URL = 'https://dainty-kangaroo-086765.netlify.app/'
             }
             steps {
                 sh '''
@@ -119,23 +122,6 @@ pipeline {
                     echo "Deploy to production. Project Id: $NETLIFY_SITE_ID"
                     node_modules/.bin/netlify status
                     node_modules/.bin/netlify deploy --dir=build --prod
-                '''
-            }
-        }
-
-        stage('Prod E2E') {
-            agent {
-                docker {
-                    image 'mcr.microsoft.com/playwright:v1.39.0-jammy'
-                    reuseNode true
-                }
-            }
-            environment {
-                CI_ENVIRONMENT_URL = 'https://dainty-kangaroo-086765.netlify.app/'
-            }
-
-            steps {
-                sh '''
                     npx playwright test --reporter=html
                 '''
             }
@@ -145,5 +131,4 @@ pipeline {
                 }
             }
         }
-    }
 }
